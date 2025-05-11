@@ -1,33 +1,63 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+import BaseHead from '../components/BaseHead.astro';
+import Nav from '../components/Nav.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import type { GetStaticPathsOptions, Page } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import Pagination from '../components/Pagination.astro';
 import PostPreview from '../components/PostPreview.astro';
 import siteConfig from '../data/site-config';
-import BaseLayout from '../layouts/BaseLayout.astro';
 import { sortItemsByDateDesc } from '../utils/data-utils';
 import Search from '../components/Search.svelte';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-    const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
-    return paginate(posts, { pageSize: siteConfig.postsPerPage || 4 });
+  const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
+  return paginate(posts, { pageSize: siteConfig.postsPerPage || 4 });
 }
 
 type Props = { page?: Page<CollectionEntry<'blog'>> };
 
 const { page } = Astro.props;
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
-
 const searchablePosts = posts.map(post => ({
   title: post.data.title,
   slug: post.filePath?.replace('src/content/blog/', '').replace('.md', '') ?? ''
 }));
 ---
 
-<BaseLayout description={siteConfig.description} image={siteConfig.image}>
-    <Search client:load posts={searchablePosts} />
-    <div class="mb-16 sm:mb-24">
-        {posts.map((post) => <PostPreview post={post} class="mb-10 sm:mb-12" />)}
-        {page && <Pagination page={page} class="my-16 sm:my-24" />}
+<!doctype html>
+<html lang="en" class="antialiased break-words">
+  <head>
+    <BaseHead title={siteConfig.title} description={siteConfig.description} image={siteConfig.image} />
+    <script>
+      if (localStorage.theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+    <ClientRouter />
+  </head>
+  <body class="bg-main text-main">
+    <div class="flex flex-col min-h-screen px-4 md:px-8">
+      <Nav />
+      <main class="grow w-full max-w-screen-xl mx-auto">
+          <Header />
+        <div class="flex">
+          <!-- Main content: posts, full-width -->
+          <section class="flex-1 px-8">
+            {posts.map(post => (
+              <PostPreview post={post} class="mb-10 sm:mb-12" />
+            ))}
+            {page && <Pagination page={page} class="my-16 sm:my-24" />}
+          </section>
+          <!-- Sidebar: search -->
+          <aside class="w-72 flex-none px-4">
+            <Search client:load posts={searchablePosts} />
+          </aside>
+        </div>
+      </main>
+      <Footer />
     </div>
-</BaseLayout>
+  </body>
+</html>
