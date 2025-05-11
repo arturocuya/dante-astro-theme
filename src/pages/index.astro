@@ -2,7 +2,6 @@
 import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Nav from '../components/Nav.astro';
-import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import type { GetStaticPathsOptions, Page } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
@@ -42,9 +41,9 @@ const searchablePosts = posts.map(post => ({
     <div class="flex flex-col min-h-screen px-4 md:px-8">
       <Nav />
       <main class="grow w-full max-w-screen-xl mx-auto">
-          <Header />
+        <!-- Logo centered in place of the site title -->
         <div class="flex">
-          <!-- Main content: posts, full-width -->
+          <!-- Main content: posts -->
           <section class="flex-1 px-8">
             {posts.map(post => (
               <PostPreview post={post} class="mb-10 sm:mb-12" />
