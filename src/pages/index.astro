@@ -6,6 +6,7 @@ import PostPreview from '../components/PostPreview.astro';
 import siteConfig from '../data/site-config';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sortItemsByDateDesc } from '../utils/data-utils';
+import Search from '../components/Search.svelte';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
@@ -16,9 +17,15 @@ type Props = { page?: Page<CollectionEntry<'blog'>> };
 
 const { page } = Astro.props;
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
+
+const searchablePosts = posts.map(post => ({
+  title: post.data.title,
+  slug: post.filePath ?? ''
+}));
 ---
 
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
+    <Search client:load posts={searchablePosts} />
     <div class="mb-16 sm:mb-24">
         {posts.map((post) => <PostPreview post={post} class="mb-10 sm:mb-12" />)}
         {page && <Pagination page={page} class="my-16 sm:my-24" />}
