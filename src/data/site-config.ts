@@ -1,4 +1,3 @@
-import { getCollection } from 'astro:content';
 import type { Image, Link } from './types';
 
 export type Hero = {
@@ -29,11 +28,6 @@ export type SiteConfig = {
 };
 
 // Get all pages from the content directory
-const pages = await getCollection('pages');
-const pageLinks = pages.map((page) => ({
-    text: page.data.title,
-    href: `/${page.id}`
-}));
 
 export default {
     website: 'https://dante-grau.vercel.app',
@@ -49,14 +43,12 @@ export default {
             text: 'Home',
             href: '/'
         },
-        ...pageLinks
     ],
     footerNavLinks: [
         {
             text: 'Home',
             href: '/'
         },
-        ...pageLinks
     ],
     socialLinks: [
         {

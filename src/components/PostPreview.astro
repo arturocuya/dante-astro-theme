@@ -1,29 +1,52 @@
 ---
 import { type CollectionEntry } from 'astro:content';
-import ArrowRight from '../icons/ArrowRight.astro';
-import FormattedDate from './FormattedDate.astro';
+
+// Utility to strip common markdown characters
+const stripMarkdown = (text: string) => text.replace(/[#_*>\[\]\(\)`~\-\+!]/g, '');
 
 type Props = { post: CollectionEntry<'blog'>; class?: string; headingLevel?: 'h2' | 'h3' };
 
 const { post, class: className, headingLevel = 'h2' } = Astro.props;
-const { title, publishDate, excerpt } = post.data;
+const { title, publishDate, excerpt, featuredImage } = post.data;
+const rawContent = typeof post.body === 'string' ? post.body : '';
+const initialPreview = excerpt || rawContent.slice(0, 300) + (rawContent.length > 300 ? '...' : '');
+const previewText = stripMarkdown(initialPreview);
 const TitleTag = headingLevel;
-const postId = post.id.split('/').pop() || post.id;
+const postId = post.id.split('/').pop()!;
 ---
 
-<a class:list={['flex justify-between items-start gap-8 group', className]} href={`/${postId}/`}>
-    <div class="grow">
-        <TitleTag
-            class="text-xl leading-tight font-serif font-medium group-hover:underline group-hover:decoration-dashed group-hover:underline-offset-4 group-hover:decoration-1 sm:text-2xl"
-        >
-            {title}
-        </TitleTag>
-        <div class="mt-1 text-sm leading-normal">
-            <FormattedDate date={publishDate} />
-        </div>
-        {excerpt && <div class="mt-3 text-sm leading-normal">{excerpt}</div>}
+<article class={`flex flex-col gap-4 ${className}`}>
+  <TitleTag class="text-2xl font-serif font-medium">
+    {title}
+  </TitleTag>
+  <div class="text-sm text-gray-500">
+    {/* Date in Spanish for Lima timezone */}
+    {new Date(publishDate).toLocaleDateString('es-PE', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'America/Lima',
+    })}
+  </div>
+  {featuredImage && (
+    <div class="flex justify-center">
+      <img
+        src={featuredImage}
+        alt={title}
+        class="w-full max-h-[450px] object-contain rounded-md"
+      />
     </div>
-    <div class="hidden font-serif italic opacity-0 transition group-hover:opacity-100 sm:inline-flex sm:gap-1 sm:items-center sm:shrink-0">
-        Read Post <ArrowRight class="fill-current w-4 h-4" />
-    </div>
-</a>
+  )}
+  <div class="text-base leading-relaxed">
+    {previewText}
+  </div>
+  <div class="mt-4 flex items-center">
+    <a
+      href={`/${postId}/`}
+      class="px-5 py-2 bg-black text-white text-sm font-medium"
+    >
+      Seguir leyendo
+    </a>
+    <hr class="flex-grow border-t border-gray-300 ml-4" />
+  </div>
+</article>

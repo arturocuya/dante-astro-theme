@@ -16,13 +16,11 @@ type Props = { page?: Page<CollectionEntry<'blog'>> };
 
 const { page } = Astro.props;
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
-const currentPosts = page?.data || posts.slice(0, siteConfig.postsPerPage || 4);
 ---
 
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
     <div class="mb-16 sm:mb-24">
-        <h2 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">Blog Archive</h2>
-        {currentPosts.map((post) => <PostPreview post={post} class="mb-10 sm:mb-12" />)}
+        {posts.map((post) => <PostPreview post={post} class="mb-10 sm:mb-12" />)}
         {page && <Pagination page={page} class="my-16 sm:my-24" />}
     </div>
 </BaseLayout>
