@@ -16,9 +16,11 @@ const postId = post.id;
 ---
 
 <article class={`flex flex-col gap-4 ${className}`}>
+  <a href={`/${postId}/`}>
   <TitleTag class="text-2xl font-serif font-medium">
     {title}
   </TitleTag>
+  </a>
   <div class="text-sm text-gray-500">
     {/* Date in Spanish for Lima timezone */}
     {new Date(publishDate).toLocaleDateString('es-PE', {
