@@ -12,7 +12,7 @@ const rawContent = typeof post.body === 'string' ? post.body : '';
 const initialPreview = excerpt || rawContent.slice(0, 300) + (rawContent.length > 300 ? '...' : '');
 const previewText = stripMarkdown(initialPreview);
 const TitleTag = headingLevel;
-const postId = post.id.split('/').pop()!;
+const postId = post.id;
 ---
 
 <article class={`flex flex-col gap-4 ${className}`}>

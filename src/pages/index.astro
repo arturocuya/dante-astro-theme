@@ -20,7 +20,7 @@ const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
 
 const searchablePosts = posts.map(post => ({
   title: post.data.title,
-  slug: post.filePath ?? ''
+  slug: post.filePath?.replace('src/content/blog/', '').replace('.md', '') ?? ''
 }));
 ---
 
