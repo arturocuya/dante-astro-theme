@@ -74,6 +74,28 @@ const searchablePosts = posts.map(post => ({
                 </p>
               </div>
             </div>
+
+            <div class="border border-black p-4">
+              <h2 class="bg-black text-white text-center text-lg font-semibold py-1 mb-3">
+                Visitanos en Facebook
+              </h2>
+                <div class="fb-page"
+                    data-href="https://www.facebook.com/Miguel.Grau.1834"
+                    data-tabs="timeline"
+                    data-width="280"
+                    data-height="130"
+                    data-small-header="false"
+                    data-adapt-container-width="true"
+                    data-hide-cover="false"
+                    data-show-facepile="true">
+                <blockquote cite="https://www.facebook.com/Miguel.Grau.1834"
+                            class="fb-xfbml-parse-ignore">
+                    <a href="https://www.facebook.com/Miguel.Grau.1834">
+                    Miguel Grau
+                    </a>
+                </blockquote>
+                </div>
+            </div>
           </aside>
         </div>
       </main>
@@ -81,3 +103,20 @@ const searchablePosts = posts.map(post => ({
     </div>
   </body>
 </html>
+
+<script>
+  // @ts-nocheck
+  if (!window.fbAsyncInit) {
+    window.fbAsyncInit = function() {
+      FB.init({ xfbml: true, version: 'v16.0' });
+    };
+    ((d, s, id) => {
+      const fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      const js = d.createElement(s);
+      js.id = id;
+      js.src = 'https://connect.facebook.net/en_US/sdk.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, 'script', 'facebook-jssdk');
+  }
+</script>
