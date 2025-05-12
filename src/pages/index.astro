@@ -41,18 +41,39 @@ const searchablePosts = posts.map(post => ({
     <div class="flex flex-col min-h-screen px-4 md:px-8">
       <Nav />
       <main class="grow w-full max-w-screen-xl mx-auto">
-        <!-- Logo centered in place of the site title -->
         <div class="flex">
-          <!-- Main content: posts -->
           <section class="flex-1 px-8">
             {posts.map(post => (
               <PostPreview post={post} class="mb-10 sm:mb-12" />
             ))}
             {page && <Pagination page={page} class="my-16 sm:my-24" />}
           </section>
-          <!-- Sidebar: search -->
-          <aside class="w-72 flex-none px-4">
+
+          <aside class="w-72 flex-none px-4 space-y-8">
             <Search client:load posts={searchablePosts} />
+
+            <div class="border border-black p-4">
+              <h2 class="bg-black text-white text-center text-lg font-semibold py-1">
+                Biografía
+              </h2>
+              <div class="flex flex-col items-center mt-4">
+                <img
+                  src="/miguel-grau-summary.jpg"
+                  alt="Miguel María Grau Seminario"
+                  class="w-24 h-24 rounded-full object-cover"
+                />
+                <h3 class="mt-4 text-center font-bold  text-sm">
+                  Miguel Maria Grau Seminario
+                </h3>
+                <p class="mt-2 text-justify text-sm leading-relaxed">
+                  Fue un marino y militar peruano, almirante de la Marina de Guerra
+                  del Perú. Durante la guerra del Pacífico, comandó el monitor
+                  <i>Huáscar</i> y mantuvo a raya a la escuadra chilena durante cinco
+                  meses, sucumbiendo finalmente de manera heroica en el combate naval
+                  de Angamos, enfrentando a fuerzas superiores.
+                </p>
+              </div>
+            </div>
           </aside>
         </div>
       </main>
