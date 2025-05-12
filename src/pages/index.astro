@@ -45,6 +45,11 @@ const searchablePosts = posts.map(post => ({
     <div class="flex flex-col min-h-screen px-4 md:px-8">
       <Nav />
 
+      <!-- Mobile-only search bar below logo -->
+      <div class="block md:hidden w-full mt-4 mb-8">
+        <Search client:load posts={searchablePosts} />
+      </div>
+
       <main class="grow w-full max-w-screen-xl mx-auto">
         <div class="flex flex-col md:flex-row">
           <!-- Posts column -->
@@ -58,9 +63,12 @@ const searchablePosts = posts.map(post => ({
             )}
           </section>
 
-          <!-- Sidebar -->
+          <!-- Sidebar for desktop only search + Bio & Facebook -->
           <aside class="w-full md:w-72 flex-none px-0 md:px-4 space-y-8 mt-8 md:mt-0">
-            <Search client:load posts={searchablePosts} />
+            <!-- Desktop-only search -->
+            <div class="hidden md:block">
+              <Search client:load posts={searchablePosts} />
+            </div>
 
             <div class="border border-black p-4">
               <h2 class="bg-black text-white text-center text-lg font-semibold py-1">
@@ -85,20 +93,22 @@ const searchablePosts = posts.map(post => ({
               </div>
             </div>
 
-            <div class="border border-black p-4">
+            <!-- Facebook embed with fixed height & overflow hidden -->
+            <div class="border border-black p-4 overflow-hidden">
               <h2 class="bg-black text-white text-center text-lg font-semibold py-1 mb-3">
                 Visítanos en Facebook
               </h2>
               <div
-                class="fb-page w-full"
+                class="fb-page w-full max-w-full"
+                style="height:130px; overflow:hidden;"
                 data-href="https://www.facebook.com/Miguel.Grau.1834"
                 data-tabs="timeline"
                 data-width=""
                 data-height="130"
-                data-small-header="false"
+                data-small-header="true"
                 data-adapt-container-width="true"
                 data-hide-cover="false"
-                data-show-facepile="true"
+                data-show-facepile="false"
               >
                 <blockquote
                   cite="https://www.facebook.com/Miguel.Grau.1834"
