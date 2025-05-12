@@ -3,23 +3,17 @@ import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import type { GetStaticPathsOptions, Page } from 'astro';
-import { type CollectionEntry, getCollection } from 'astro:content';
-import Pagination from '../components/Pagination.astro';
+import Search from '../components/Search.svelte';
 import PostPreview from '../components/PostPreview.astro';
 import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
-import Search from '../components/Search.svelte';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 
-export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
-  return paginate(posts, { pageSize: siteConfig.postsPerPage || 4 });
-}
-
-type Props = { page?: Page<CollectionEntry<'blog'>> };
-
-const { page } = Astro.props;
+// fetch & sort all posts at build time
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
+
+// minimal shape for client-side search
 const searchablePosts = posts.map(post => ({
   title: post.data.title,
   slug: post.filePath?.replace('src/content/blog/', '').replace('.md', '') ?? ''
@@ -35,37 +29,41 @@ const searchablePosts = posts.map(post => ({
       image={siteConfig.image}
     />
     <script>
-      if (localStorage.theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      }
+      if (localStorage.theme === 'dark') document.documentElement.classList.add('dark');
     </script>
     <ClientRouter />
   </head>
+
   <body class="bg-main text-main">
     <div class="flex flex-col min-h-screen px-4 md:px-8">
       <Nav />
 
-      <!-- Mobile-only search bar below logo -->
+      <!-- Mobile search -->
       <div class="block md:hidden w-full mt-4 mb-8">
         <Search client:load posts={searchablePosts} />
       </div>
 
       <main class="grow w-full max-w-screen-xl mx-auto">
         <div class="flex flex-col md:flex-row">
-          <!-- Posts column -->
+          <!-- POSTS + CLIENT-SIDE PAGINATION -->
           <section class="flex-1 px-0 md:px-8">
-            {posts.map(post => (
-              <PostPreview post={post} class="mb-10 md:mb-12" />
+            <!-- render all posts, then JS will hide/show -->
+            {posts.map((post, i) => (
+              <div data-index={i} class="post-item mb-10 md:mb-12">
+                <PostPreview post={post} />
+              </div>
             ))}
 
-            {page && (
-              <Pagination page={page} class="my-16 md:my-24" />
-            )}
+            <!-- pagination controls -->
+            <nav
+              id="pagination-container"
+              class="my-16 md:my-24 flex flex-wrap items-center justify-center gap-2 max-w-full"
+            ></nav>
           </section>
 
-          <!-- Sidebar for desktop only search + Bio & Facebook -->
+          <!-- SIDEBAR -->
           <aside class="w-full md:w-72 flex-none px-0 md:px-4 space-y-8 mt-8 md:mt-0">
-            <!-- Desktop-only search -->
+            <!-- Desktop search -->
             <div class="hidden md:block">
               <Search client:load posts={searchablePosts} />
             </div>
@@ -81,30 +79,27 @@ const searchablePosts = posts.map(post => ({
                   class="w-24 h-24 rounded-full object-cover"
                 />
                 <h3 class="mt-4 text-center font-bold text-sm">
-                  Miguel Maria Grau Seminario
+                  Miguel María Grau Seminario
                 </h3>
                 <p class="mt-2 text-justify text-sm leading-relaxed">
                   Fue un marino y militar peruano, almirante de la Marina de Guerra
                   del Perú. Durante la guerra del Pacífico, comandó el monitor
                   <i>Huáscar</i> y mantuvo a raya a la escuadra chilena durante cinco
                   meses, sucumbiendo finalmente de manera heroica en el combate naval
-                  de Angamos, enfrentando a fuerzas superiores.
+                  de Angamos.
                 </p>
               </div>
             </div>
 
-            <!-- Facebook embed with fixed height & overflow hidden -->
             <div class="border border-black p-4 overflow-hidden">
               <h2 class="bg-black text-white text-center text-lg font-semibold py-1 mb-3">
                 Visítanos en Facebook
               </h2>
               <div
-                class="fb-page w-full max-w-full"
+                class="fb-page w-full"
                 style="height:130px; overflow:hidden;"
                 data-href="https://www.facebook.com/Miguel.Grau.1834"
                 data-tabs="timeline"
-                data-width=""
-                data-height="130"
                 data-small-header="true"
                 data-adapt-container-width="true"
                 data-hide-cover="false"
@@ -127,21 +122,132 @@ const searchablePosts = posts.map(post => ({
       <Footer />
     </div>
 
+    <!-- Facebook SDK -->
     <script>
-      // @ts-nocheck
       if (!window.fbAsyncInit) {
         window.fbAsyncInit = function() {
           FB.init({ xfbml: true, version: 'v16.0' });
         };
-        ((d, s, id) => {
-          const fjs = d.getElementsByTagName(s)[0];
+        (function(d, s, id) {
+          var js,
+            fjs = d.getElementsByTagName(s)[0];
           if (d.getElementById(id)) return;
-          const js = d.createElement(s);
+          js = d.createElement(s);
           js.id = id;
           js.src = 'https://connect.facebook.net/en_US/sdk.js';
           fjs.parentNode.insertBefore(js, fjs);
         })(document, 'script', 'facebook-jssdk');
       }
+    </script>
+
+    <!-- Client-side pagination logic with ellipsis & Tailwind styling -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const items = Array.from(document.querySelectorAll('.post-item'));
+        const perPage = 10;
+        const totalPages = Math.ceil(items.length / perPage);
+        let currentPage = 1;
+        const pager = document.getElementById('pagination-container');
+
+        function showPage(page) {
+          currentPage = page;
+          const start = (page - 1) * perPage;
+          const end = start + perPage;
+          items.forEach((el, idx) => {
+            el.style.display = idx >= start && idx < end ? '' : 'none';
+          });
+          renderPager();
+        }
+
+        function renderPager() {
+          pager.innerHTML = '';
+
+          // helpers
+          const makeBtn = (text, disabled, onClick, isActive) => {
+            const b = document.createElement('button');
+            b.textContent = text;
+            b.disabled = disabled;
+            b.addEventListener('click', onClick);
+
+            // base square styling
+            const base = 'px-3 py-1 text-sm rounded-none cursor-pointer';
+
+            // unselected: black border, transparent bg, black text
+            const normal = 'border border-black bg-transparent text-black';
+
+            // selected: solid black bg, white text
+            const active = 'bg-black border-black text-white';
+
+            // disabled appearance
+            const disabledCls = 'opacity-50 cursor-not-allowed';
+
+            // compose classes
+            b.className = [
+              base,
+              isActive ? active : normal,
+              disabled ? disabledCls : ''
+            ].filter(Boolean).join(' ');
+
+            return b;
+          };
+
+          const makeEllipsis = () => {
+            const s = document.createElement('span');
+            s.textContent = '…';
+            s.className = 'px-2 text-gray-500';
+            return s;
+          };
+
+          // Prev
+          pager.appendChild(
+            makeBtn('Prev', currentPage === 1, () => showPage(currentPage - 1), false)
+          );
+
+          // page range calculation
+          let startPage, endPage;
+          if (totalPages <= 5) {
+            startPage = 1;
+            endPage = totalPages;
+          } else if (currentPage <= 3) {
+            startPage = 1;
+            endPage = 5;
+          } else if (currentPage >= totalPages - 2) {
+            startPage = totalPages - 4;
+            endPage = totalPages;
+          } else {
+            startPage = currentPage - 2;
+            endPage = currentPage + 2;
+          }
+
+          // first page + ellipsis
+          if (startPage > 1) {
+            pager.appendChild(makeBtn(1, false, () => showPage(1), currentPage === 1));
+            pager.appendChild(makeEllipsis());
+          }
+
+          // middle pages
+          for (let i = startPage; i <= endPage; i++) {
+            pager.appendChild(makeBtn(i, false, () => showPage(i), i === currentPage));
+          }
+
+          // ellipsis + last page
+          if (endPage < totalPages) {
+            pager.appendChild(makeEllipsis());
+            pager.appendChild(
+              makeBtn(totalPages, false, () => showPage(totalPages), currentPage === totalPages)
+            );
+          }
+
+          // Next
+          pager.appendChild(
+            makeBtn('Next', currentPage === totalPages, () => showPage(currentPage + 1), false)
+          );
+        }
+
+        // initialize
+        showPage(1);
+        window.scrollTo({ top: 0 });
+      });
     </script>
   </body>
 </html>
