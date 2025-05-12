@@ -31,38 +31,62 @@ export type SiteConfig = {
 
 export default {
     website: 'https://dante-grau.vercel.app',
-    title: 'Dante Grau',
-    subtitle: 'Personal Website',
-    description: 'Personal website of Dante Grau',
+    title: 'Grau.Pe',
+    subtitle: 'Todo sobre el caballero de los mares',
+    description: 'Todo sobre el caballero de los mares',
     image: {
-        src: '/dante-preview.jpg',
-        alt: 'The preview of the site'
+        src: '/grau-pe-logo.png',
+        alt: 'Todo sobre el caballero de los mares'
     },
     headerNavLinks: [
         {
-            text: 'Home',
+            text: 'Inicio',
             href: '/'
         },
+        {
+            text: 'Biografia',
+            href: '/biografia'
+        },
+        {
+            text: 'Videos',
+            href: '/videos'
+        },
+        {
+            text: 'Bibliografia',
+            href: '/bibliografia'
+        },
+        {
+            text: 'Editores',
+            href: '/equipo-editor'
+        },
+        {
+            text: 'ISO 21001',
+            href: 'https://www.iso21001.us/'
+        },
+        {
+            text: 'Contacto',
+            href: '/contacto'
+        }
     ],
     footerNavLinks: [
         {
             text: 'Home',
             href: '/'
         },
+        {
+            text: 'ISO 21001',
+            href: 'https://www.iso21001.us/'
+        },
+        {
+            text: 'Contacto',
+            href: '/contacto'
+        }
     ],
     socialLinks: [
         {
-            text: 'GitHub',
-            href: 'https://github.com/dante-grau'
+            text: 'Visitanos en Facebook',
+            href: 'https://www.facebook.com/Miguel.Grau.1834'
         },
-        {
-            text: 'Twitter',
-            href: 'https://twitter.com/dante_grau'
-        },
-        {
-            text: 'LinkedIn',
-            href: 'https://linkedin.com/in/dante-grau'
-        }
     ],
     postsPerPage: 4
 } satisfies SiteConfig;
