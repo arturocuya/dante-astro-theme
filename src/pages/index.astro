@@ -29,7 +29,11 @@ const searchablePosts = posts.map(post => ({
 <!doctype html>
 <html lang="en" class="antialiased break-words">
   <head>
-    <BaseHead title={siteConfig.title} description={siteConfig.description} image={siteConfig.image} />
+    <BaseHead
+      title={siteConfig.title}
+      description={siteConfig.description}
+      image={siteConfig.image}
+    />
     <script>
       if (localStorage.theme === 'dark') {
         document.documentElement.classList.add('dark');
@@ -40,16 +44,22 @@ const searchablePosts = posts.map(post => ({
   <body class="bg-main text-main">
     <div class="flex flex-col min-h-screen px-4 md:px-8">
       <Nav />
+
       <main class="grow w-full max-w-screen-xl mx-auto">
-        <div class="flex">
-          <section class="flex-1 px-8">
+        <div class="flex flex-col md:flex-row">
+          <!-- Posts column -->
+          <section class="flex-1 px-0 md:px-8">
             {posts.map(post => (
-              <PostPreview post={post} class="mb-10 sm:mb-12" />
+              <PostPreview post={post} class="mb-10 md:mb-12" />
             ))}
-            {page && <Pagination page={page} class="my-16 sm:my-24" />}
+
+            {page && (
+              <Pagination page={page} class="my-16 md:my-24" />
+            )}
           </section>
 
-          <aside class="w-72 flex-none px-4 space-y-8">
+          <!-- Sidebar -->
+          <aside class="w-full md:w-72 flex-none px-0 md:px-4 space-y-8 mt-8 md:mt-0">
             <Search client:load posts={searchablePosts} />
 
             <div class="border border-black p-4">
@@ -62,7 +72,7 @@ const searchablePosts = posts.map(post => ({
                   alt="Miguel María Grau Seminario"
                   class="w-24 h-24 rounded-full object-cover"
                 />
-                <h3 class="mt-4 text-center font-bold  text-sm">
+                <h3 class="mt-4 text-center font-bold text-sm">
                   Miguel Maria Grau Seminario
                 </h3>
                 <p class="mt-2 text-justify text-sm leading-relaxed">
@@ -77,46 +87,51 @@ const searchablePosts = posts.map(post => ({
 
             <div class="border border-black p-4">
               <h2 class="bg-black text-white text-center text-lg font-semibold py-1 mb-3">
-                Visitanos en Facebook
+                Visítanos en Facebook
               </h2>
-                <div class="fb-page"
-                    data-href="https://www.facebook.com/Miguel.Grau.1834"
-                    data-tabs="timeline"
-                    data-width="280"
-                    data-height="130"
-                    data-small-header="false"
-                    data-adapt-container-width="true"
-                    data-hide-cover="false"
-                    data-show-facepile="true">
-                <blockquote cite="https://www.facebook.com/Miguel.Grau.1834"
-                            class="fb-xfbml-parse-ignore">
-                    <a href="https://www.facebook.com/Miguel.Grau.1834">
+              <div
+                class="fb-page w-full"
+                data-href="https://www.facebook.com/Miguel.Grau.1834"
+                data-tabs="timeline"
+                data-width=""
+                data-height="130"
+                data-small-header="false"
+                data-adapt-container-width="true"
+                data-hide-cover="false"
+                data-show-facepile="true"
+              >
+                <blockquote
+                  cite="https://www.facebook.com/Miguel.Grau.1834"
+                  class="fb-xfbml-parse-ignore"
+                >
+                  <a href="https://www.facebook.com/Miguel.Grau.1834">
                     Miguel Grau
-                    </a>
+                  </a>
                 </blockquote>
-                </div>
+              </div>
             </div>
           </aside>
         </div>
       </main>
+
       <Footer />
     </div>
+
+    <script>
+      // @ts-nocheck
+      if (!window.fbAsyncInit) {
+        window.fbAsyncInit = function() {
+          FB.init({ xfbml: true, version: 'v16.0' });
+        };
+        ((d, s, id) => {
+          const fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          const js = d.createElement(s);
+          js.id = id;
+          js.src = 'https://connect.facebook.net/en_US/sdk.js';
+          fjs.parentNode.insertBefore(js, fjs);
+        })(document, 'script', 'facebook-jssdk');
+      }
+    </script>
   </body>
 </html>
-
-<script>
-  // @ts-nocheck
-  if (!window.fbAsyncInit) {
-    window.fbAsyncInit = function() {
-      FB.init({ xfbml: true, version: 'v16.0' });
-    };
-    ((d, s, id) => {
-      const fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      const js = d.createElement(s);
-      js.id = id;
-      js.src = 'https://connect.facebook.net/en_US/sdk.js';
-      fjs.parentNode.insertBefore(js, fjs);
-    })(document, 'script', 'facebook-jssdk');
-  }
-</script>
