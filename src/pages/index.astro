@@ -124,6 +124,7 @@ const searchablePosts = posts.map(post => ({
 
     <!-- Facebook SDK -->
     <script>
+      // @ts-nocheck
       if (!window.fbAsyncInit) {
         window.fbAsyncInit = function() {
           FB.init({ xfbml: true, version: 'v16.0' });
@@ -142,6 +143,7 @@ const searchablePosts = posts.map(post => ({
 
     <!-- Client-side pagination logic with ellipsis & Tailwind styling -->
     <script>
+      // @ts-nocheck
       document.addEventListener('DOMContentLoaded', () => {
         const items = Array.from(document.querySelectorAll('.post-item'));
         const perPage = 10;
@@ -200,7 +202,7 @@ const searchablePosts = posts.map(post => ({
 
           // Prev
           pager.appendChild(
-            makeBtn('Prev', currentPage === 1, () => showPage(currentPage - 1), false)
+            makeBtn('Anterior', currentPage === 1, () => showPage(currentPage - 1), false)
           );
 
           // page range calculation
@@ -240,7 +242,7 @@ const searchablePosts = posts.map(post => ({
 
           // Next
           pager.appendChild(
-            makeBtn('Next', currentPage === totalPages, () => showPage(currentPage + 1), false)
+            makeBtn('Siguiente', currentPage === totalPages, () => showPage(currentPage + 1), false)
           );
         }
 
