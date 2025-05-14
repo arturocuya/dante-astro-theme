@@ -1,15 +1,25 @@
 ---
 import { type CollectionEntry } from 'astro:content';
 
-// Utility to strip common markdown characters
+// Utility functions to clean content for previews
 const stripMarkdown = (text: string) => text.replace(/[#_*>\[\]\(\)`~\-\+!]/g, '');
+
+// Remove import statements, HTML tags, and clean up the text
+const cleanContentForPreview = (text: string) => {
+  return text
+    .replace(/import\s+.*?;/g, '') // Remove import statements
+    .replace(/<[^>]*>/g, '') // Remove HTML-like tags
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim();
+};
 
 type Props = { post: CollectionEntry<'blog'>; class?: string; headingLevel?: 'h2' | 'h3' };
 
 const { post, class: className, headingLevel = 'h2' } = Astro.props;
 const { title, publishDate, excerpt, featuredImage } = post.data;
 const rawContent = typeof post.body === 'string' ? post.body : '';
-const initialPreview = excerpt || rawContent.slice(0, 300) + (rawContent.length > 300 ? '...' : '');
+const cleanedContent = cleanContentForPreview(rawContent);
+const initialPreview = excerpt || cleanedContent.slice(0, 300) + (cleanedContent.length > 300 ? '...' : '');
 const previewText = stripMarkdown(initialPreview);
 const TitleTag = headingLevel;
 const postId = post.id;
