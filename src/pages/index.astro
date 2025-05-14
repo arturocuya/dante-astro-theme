@@ -16,7 +16,7 @@ const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
 // minimal shape for client-side search
 const searchablePosts = posts.map(post => ({
   title: post.data.title,
-  slug: post.filePath?.replace('src/content/blog/', '').replace('.md', '') ?? ''
+  slug: post.filePath?.replace('src/content/blog/', '').replace('.mdx', '') ?? ''
 }));
 ---
 
