@@ -31,7 +31,7 @@ export type SiteConfig = {
 
 export default {
     website: 'https://dante-grau.vercel.app',
-    title: 'Grau.Pe',
+    title: 'Miguel Grau - El caballero de los mares',
     subtitle: 'Todo sobre el caballero de los mares',
     description: 'Todo sobre el caballero de los mares',
     image: {
@@ -44,28 +44,12 @@ export default {
             href: '/'
         },
         {
-            text: 'Biografia',
-            href: '/biografia'
-        },
-        {
             text: 'Videos',
             href: '/videos'
         },
         {
-            text: 'Bibliografia',
-            href: '/bibliografia'
-        },
-        {
-            text: 'Editores',
-            href: '/equipo-editor'
-        },
-        {
             text: 'ISO 21001',
             href: 'https://www.iso21001.us/'
-        },
-        {
-            text: 'Contacto',
-            href: '/contacto'
         }
     ],
     footerNavLinks: [
@@ -77,16 +61,11 @@ export default {
             text: 'ISO 21001',
             href: 'https://www.iso21001.us/'
         },
-        {
-            text: 'Contacto',
-            href: '/contacto'
-        }
     ],
     socialLinks: [
         {
             text: 'Visitanos en Facebook',
             href: 'https://www.facebook.com/Miguel.Grau.1834'
         },
-    ],
-    postsPerPage: 4
+    ]
 } satisfies SiteConfig;
